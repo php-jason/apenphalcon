@@ -11,8 +11,8 @@ class ModelBase extends Phalcon\Mvc\Model
     public $db = null;
     function initialize() {
        $c = $this->getDI()->get('config');
-       $this->db = new Dbmysql($c->database->host,$c->database->username,
-                              $c->database->password,$c->database->dbname);
+       $this->db = new PDO(sprintf("mysql:host=%s;dbname=%s;charset=%s", $c->database->host, $c->database->dbname, $c->database->charset, $c->database->username, $c->database->password);
+       $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
   function getComicCoverUrl($comicid = null ,$isdetail = null,$serverid = 53){
