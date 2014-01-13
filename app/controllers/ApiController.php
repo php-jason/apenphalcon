@@ -9,7 +9,21 @@ class ApiController extends WebBase {
   }
   public function videourlAction($key,$isb = null,$isdownload = null){
     //判断referer是否合法
+    $domain_arr = explode('|', $this->config->url->domain_url);
+    $referer = false;
+    foreach($domain_arr as $v){
+      if(false !== strpos($_SERVER['HTTP_REFERER'], $v)){
+        $referer = true;
+        break;
+      } 
+    }
+    if(!$referer){
+      die(0);
+    }
     //判断请求是否Ajax
+    if( 'XMLHttpRequest' != $_SERVER['HTTP_X_REQUESTED_WITH']){
+       die(0);
+    }
     //判断是否登录
     if( !$this->_userInfo['uid']){
        die(json_encode(array('status' => 4)));
