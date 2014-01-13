@@ -1,0 +1,16 @@
+<!--{foreach from=$lists item=row}-->
+<li> 
+<a href="/maindex/detail/<!--{$row.avkey}-->" title="<!--{$row.title}-->"><img src="<!--{$row.picurl}-->" alt="<!--{$row.title}-->" onError="this.src='/images/global/error.jpg';" /></a>
+<h3><a href="/maindex/detail/<!--{$row.avkey}-->" title="<!--{$row.title}-->"><!--{$row.title}--></a></h3>
+<p>上傳帳號：<!--{$row.username|substr:5}-->****</p>
+<!--{if $row.isessence}-->
+<span class="watermark">精選好片</span>
+<!--{/if}-->
+<!--{if $row.cid==9}-->
+<span class="ismasked">店長推薦</span>
+<!--{/if}-->
+<!--{if $isAdmin}-->
+<p><a href="/avadmin/detail/<!--{$row.avkey}-->" target="_blank">edit</a></p>
+<!--{/if}-->
+</li>
+<!--{/foreach}-->

@@ -1,0 +1,122 @@
+<!--{include file="header.html"}-->
+<section class="watchVideoContainer">
+    <div class="masthead">
+      <ul class="watchTitle">
+<p>目前位置：</p>
+        <li>
+        <!--{foreach from=$channels item=channel}--><!--{if $cid ==$channel.cid}--><a href="/maindex/lists/<!--{$channel.cid}-->" title="<!--{$channel.name}-->" class="globalText" ><!--{$channel.name}--></a><!--{/if}--><!--{/foreach}-->
+        </li>
+        <li>></li>
+        <li class="selected"><!--{$info.title}--></li>
+
+      </ul>
+    </div>
+    
+    <div class="watchVideo" id="watchVideo">
+<!--{if $info.ismp4}-->
+    <div class="video-js-box">
+    <video class="video-js" id="videoplayer" ended="0" poster="<!--{$info.picurl}-->" height="480" width="800" controls="controls" >
+            <source <!--{if $info.ismp4}-->type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' <!--{/if}-->src="<!--{$info.videourl}-->"></source>
+    </video>
+    </div>
+<!--{/if}-->
+    </div>
+
+    <div class="downloadBox">
+    <ul>
+<!--{if $userInfo.isvip == 2}-->
+    <!--{if $isb}-->
+    <li><a href="/maindex/download/<!--{$info.avkey}-->/B"  target="_blank" title="按此下載珍藏『高畫質影片原始檔』 <!--{$info.title}-->">按此下載珍藏『高畫質影片原始檔』</a></li>
+    <!--{else}-->
+    <li><a href="/maindex/download/<!--{$info.avkey}-->"    target="_blank" title="按此下載珍藏『高畫質影片原始檔』 <!--{$info.title}-->" >按此下載珍藏『高畫質影片原始檔』</a></li>
+    <!--{/if}-->
+    <!--{else}-->
+    <li><a href="#" class='issvipbutton'  title="按此下載珍藏『高畫質影片原始檔』<!--{$info.title}-->" >按此下載珍藏『高畫質影片原始檔』</a></li>
+    <!--{/if}-->
+
+    </ul>
+    </div>
+</section>
+    <section class="mainBox">
+    <div class="relatedVideo">
+    <h3>相關影片</h3>
+      <ul>
+        <!--{include file="lists.html"}-->
+      </ul>
+    </div>
+</section>
+
+<script type="text/javascript" src="http://av.ckcdn.com/js/jquery.js"></script>
+<script type="text/javascript" src="http://av.ckcdn.com/js/ja/jquery.ui.draggable.js"></script>
+<script type="text/javascript" src="http://av.ckcdn.com/js/ja/jquery.alerts.js"></script>
+<!--{if $info.ismp4}-->
+<script type="text/javascript" src="http://av.ckcdn.com/js/video.js"></script>
+<link rel="stylesheet" href="http://av.ckcdn.com/css/video-js.css" type="text/css" media="screen" title="Video JS">
+<!--{/if}-->
+<script type="text/javascript" src="http://av.ckcdn.com/jw/jwplayer.js"></script>
+<script type="text/javascript">
+
+    
+<!--{if $userInfo}-->
+<!--{if $userInfo.isvip >0 ||!$lastFreeLog}-->
+<!--{if $ismp4}-->
+if($('video').attr('ended') != undefined) {
+    VideoJS.setupAllWhenReady();
+    $(document).ready(function() { $.get('/maindex/addPlayed/<!--{$info.avkey}-->'); });
+
+}else{
+  $('#yt-alert-warn').show();
+<!--{/if}-->
+
+  pflag = {flag:0,setFlag:function(f){this.flag=f;}}
+  jwplayer("watchVideo").setup({
+    'flashplayer': '/jw/player.swf',
+    'provider':'http',
+    'margin':'0',
+    'id': 'playerID',
+    'width': '900',
+    'height': '540',
+    'skin':'/skin/bekle.zip',
+    'file': '<!--{$info.videourl}-->',
+    'image': '<!--{$info.picurl}-->',
+    'autostart':'true',
+     'events':{onPlay:function(event){if(pflag.flag==0){jQ.get('/maindex/addPlayed/<!--{$info.avkey}-->');pflag.setFlag(1);return false;}else{return false;}}},
+    'plugins': {
+       'timeslidertooltipplugin-1': {}
+    }
+  });
+
+<!--{if $ismp4}-->
+}
+<!--{/if}-->
+<!--{/if}-->
+<!--{/if}-->
+
+  </script>
+<script>
+<!--{if $userInfo.isvip < 1 && $lastFreeLog}-->
+jConfirm('觀看請先登入CK VIP!!!\n想登入VIP嗎？\n', '確認', function(r) {
+        if(r){
+           _gaq.push(['_trackEvent', 'pay','js-vipopen']);
+           self.location.href=('http://ck101.com/85pay.php?op=info&utm_source=apen&utm_medium=play&utm_campaign=vipplay');
+         }else
+         return false;
+ });
+
+<!--{/if}-->
+
+
+$(document).ready(function() {
+$('.issvipbutton').click(function(){
+    jConfirm('下載只提供S-VIP下載!!!\n想加入S-VIP嗎？\n', '確認', function(r) {
+        if(r){
+            _gaq.push(['_trackEvent', 'pay','js-vipsopen']);
+            window.open('http://ck101.com/85pay.php?op=info&utm_source=apen&utm_medium=play&utm_campaign=svipplay');
+        }else
+            return false;
+    
+    });
+  });
+});
+</script>
+<!--{include file="footer.html"}-->

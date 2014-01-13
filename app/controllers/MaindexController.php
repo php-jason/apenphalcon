@@ -1,90 +1,126 @@
 <?php
 class MaindexController extends WebBase {
+  public $_perpage = 20;
+  public $_isDuplicateIp = 0;
+  public $smarty = null;
+
   public function initialize() {
     parent::initialize();
+    $this->smarty = new Smartyview();
+    $this->_setViewData(array('_channels'=>$this->_channels,'isAdmin'=>$this->isadmin, 'current_url'=>$this->config->url->base_url.$_SERVER['REQUEST_URI'],'base_url'=>$this->config->url->base_url,'css_url'=>$this->config->url->css_url,'pageMethod'=>$this->_pageMethod,'pageProg'=>$this->_pageProg,'exectime'=>$time,'userInfo'=>$this->_userInfo,'nowtime'=>time(),'js_url'=>$this->config->url->js_url,'img_url'=>$this->config->url->img_url,'domainArr'=>$this->_domainArr));
+    if(in_array($this->_pageMethod, array('index','play','detail'))){
+       $this->_channels = $this->avModel->getChannelList();
+       $hotTags = $this->avModel->getHotTags();
+       $this->_setViewData(array('channels' => $this->_channels, 'hotTags' =>$hotTags));
+    }
   }
 
+  function _setViewData($d){
+    foreach($d as $k => $v){
+      $this->viewData[$k] = $v;
+    }
+    return true;
+  }
   function ckiframeAction(){
     $this->smarty->assign($this->viewData);
     $this->smarty->display('ckindex.html');
     fastcgi_finish_request();
   }
 
-  function indexAction(){
+  function cindexAction(){
     $this->smarty->assign($this->viewData);
     $this->smarty->display("index.html");
     fastcgi_finish_request();
   }
 
-  function cindexAction($message = null){
-    $wk=date("w");
-    $wkday=array(0 =>array('en'=>'sunday','zn'=>'日','wk'=>0),1=>array('en'=>'monday','zn'=>'一','wk'=>1),2=>array('en'=>'tuesday','zn'=>'二','wk'=>2),3=>array('en'=>'wednesday','zn'=>'三','wk'=>3),4=>array('en'=>'thursday','zn'=>'四','wk'=>4),5=>array('en'=>'friday','zn'=>'五','wk'=>5),6=>array('en'=>'saturday','zn'=>'六','wk'=>6));
-    $weeklylist = $this->viewData["weeklyCountList"];
-    $wkday[0]['num']=$weeklylist[0]['total'];
-    $wkday[1]['num']=$weeklylist[1]['total'];
-    $wkday[2]['num']=$weeklylist[2]['total'];
-    $wkday[3]['num']=$weeklylist[3]['total'];
-    $wkday[4]['num']=$weeklylist[4]['total'];
-    $wkday[5]['num']=$weeklylist[5]['total'];
-    $wkday[6]['num']=$weeklylist[6]['total'];
-    $wkpick=$wkday[$wk];unset($wkday[$wk]);
-    array_unshift($wkday,$wkpick);
-    $channellist = $this->viewData["comicChannelList"];
-    $volsKey=array();
-    foreach($channellist as $v)
-    {
-      $volskey[]="nc-indexvolshotlist{$v['id']}";
-      $lists=array();
-      array_unshift($lists,array("name"=>$v['name']));
-      $vlists[]=$lists;
-    }
-    $mlists=$this->multicache->get($volskey);
-    if(count($mlists)<=0){
-       unset($vlists);
-       while(list($k,$v) = each($channellist))
-       {
-         $lists = $this->indexModel->getIndexHotComicsByDate(date('Ymd',strtotime("-1 day")),1,15,$v['id']);
-        array_unshift($lists,array("name"=>$v['name']));
-        if(isset($lists[1]))
-          $this->multicache->set("nc-indexvolshotlist{$v['id']}",$lists);
-        $vlists[]=$lists;
-       }
-    }
-    foreach($mlists as $m){
-      foreach($vlists as $k => $v){
-        if($m[0]['name'] == $v[0]['name'])
-          $vlists[$k]=$m;
+  function checkLogin(){
+    die(json_encode($this->_userInfo));
+  }
+
+  function checkUserIP(){
+      if($this->_userInfo['uid']){
+          $ip = get_client_ip();
+          if($this->_userInfo['lastip'] != $ip){
+            $this->logout(1);
+            $this->_isDuplicateIp = true;
+          }
+
       }
+      return true;
+  }
+
+  function indexAction($cid=0,$order = 0 ,$nowpage = 1,$iswarrning = 0){
+    $lists = $this->avModel->getChannelList();
+    
+    if($this->ismobile){
+      $this->mindex();
+      return true;
     }
-    $hash=$this->array_pick($vlists,3);
-    $key=array_keys($hash);
-    $this->_setViewData(array("indexvolshotlist1"=>$hash[$key[0]],"indexvolshotlist2"=>$hash[$key[1]],"indexvolshotlist3"=>$hash[$key[2]],"wkday"=>$wkday));
+    if(!$this->_userInfo['uid'] && $nowpage > 20){
+      $this->response->redirect('/pay');
+      return true;
+    }
+    $CountAll = 0;
+    foreach($this->_channels as $k => $v)
+      $CountAll += $v['videocount'];
+
+    $lists = $this->avModel->getVideosByCid($cid,$order,$nowpage,$this->_perpage);
+//var_dump($CountAll);exit;
+    $PAGESTR    = $this->page->getPaginationString($nowpage, $CountAll, $this->_perpage, 1, "/", "maindex/index/$cid/$order/");
+    if($iswarrning){
+       $ip = get_client_ip();
+       $this->_setViewData(array('isWarrning' => 1, 'ip' => $ip));
+    }
+
+    $this->_setViewData(array('PAGESTR' => $PAGESTR, 'cid' => $cid, 'order' => $order, 'lists' => $lists, 'nowpage' => $nowpage));
     $this->smarty->assign($this->viewData);
-    $this->smarty->display('cindex.html');
+    $this->smarty->display('index.html');
+    $this->setUserIP();
     fastcgi_finish_request();
   }
 
-  function weeklylistsAction($wkday = null,$nowpage = 0){
-    $newwk = date('w');
-    $wkar=array(0 =>array('en'=>'sunday','zn'=>'日'),1=>array('en'=>'monday','zn'=>'一'),2=>array('en'=>'tuesday','zn'=>'二'),3=>array('en'=>'wednesday','zn'=>'三'),4=>array('en'=>'thursday','zn'=>'四'),5=>array('en'=>'friday','zn'=>'五'),6=>array('en'=>'saturday','zn'=>'六'));
-    $wkar[$newwk]['day']=date("Ymd");
-    for($i=1;$i<=6;$i++){
-      $wk=date("w",strtotime("-{$i} day"));
-      $wkar[$wk]['day']=date("Ymd",strtotime("-{$i} day"));
+  function detailAction($key = null, $isb=null){
+    $this->playAction($key , $isb);
+  }
+  function playAction($key = null, $isb=null){
+    if($this->ismobile){
+       $this->mplay($key,$isb);
+       return true;
     }
-    if(!isset($wkar[$wkday]))
-      $wkday=$newwk;
+    $noAvurl=false;
+    if(!$this->_userInfo['uid'])
+      $noAvurl=true;
 
-    $lists = $this->indexModel->getVolsByrtime($wkar[$wkday]['day'],$nowpage,30);
-
-    $ttotal = $this->indexModel->getWeeklyCountById($wkday);
-    if($ttotal){
-      $PAGESTR = $this->page->getPaginationString($nowpage, $ttotal, 30, 1, "/", "weeklylists/".$wkday."/");
-      $this->_setViewData(array('PAGESTR'=>$PAGESTR,'ttotal'=>$ttotal));
+    $lastFreeLog = true;
+    if(isset($this->_userInfo['isvip'])){
+      $lastFreeLog = $this->avModel->getLastFreeLog($this->_userInfo['uid']);
+      if($this->_userInfo['isvip'] < 1 && $lastFreeLog)
+        $noAvurl=true;
     }
-    $this->_setViewData(array('lists'=>$lists,'nowpage'=>$nowpage,'weekly'=>$wkar[$wkday]['zn'],'day'=>$wkar[$wkday]['day']));
+
+    $info = $this->avModel->getAvByid($key,$isb, '', $this->isadmin);
+    if( !isset($info['avkey'])){
+       $this->response->redirect("maindex/index/0/0/0/0/");
+    }
+    $info['picurl'] = $this->avModel->getPicUrl($info['avkey'],$info['serverid'],'b');
+    if($this->_userInfo['lastip'] != get_client_ip()){
+       $noAvurl=true;
+    }
+    if($noAvurl){
+      unset($info['videourl']);
+    }
+    $cid = $info['cid'];
+    $taglists = $this->avModel->getTagsByVid($info['vid']);
+    $lists=array();
+    if($info['relatedata']){
+      $lists = unserialize($info['relatedata']);
+    }
+    $this->_setViewData(array('lastFreeLog' =>$lastFreeLog,'ismp4' =>1,'isb' =>$isb,'cid' =>$cid,'lists' =>$lists,'taglists' =>$taglists,'info' =>$info));
     $this->smarty->assign($this->viewData);
-    $this->smarty->display("weeklylists.html");
+    //$this->smarty->display("play.new.html");
+    $this->smarty->display("detail.html");
+    $this->avModel->addLog($key,$this->_userInfo['uid'],'freecount');
+    $this->setUserIP();
     fastcgi_finish_request();
   }
   

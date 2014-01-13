@@ -1,0 +1,9 @@
+<!--{foreach from=$lists item=row}-->
+<li> <a href="/maindex/detail/<!--{$row.avkey}-->" title="<!--{$row.title}-->"><img src="<!--{$row.picurl}-->" alt="<!--{$row.title}-->" onError="this.src='/images/global/error.jpg';" /></a>
+<h4><a href="/maindex/detail/<!--{$row.avkey}-->" title="<!--{$row.title}-->"><!--{$row.title}--></a></h4>
+<p>上傳帳號：<!--{$row.username|substr:5}-->****</p>
+<!--{if $row.isessence}-->
+<span class="watermark">業界最新</span>
+<!--{/if}-->
+</li>
+<!--{/foreach}-->

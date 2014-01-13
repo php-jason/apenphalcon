@@ -2,55 +2,102 @@
 
 class ModelBase extends Phalcon\Mvc\Model
 {
-    protected $_comicsColum     = ' c.`id` ,  c.`cid` ,  c.`name` , c.`oname`,c.`testname`, c.`isdone` ,  c.`hits`  , c.`ttotal` , c.`lastuploader` , c.`isadult`,c.`lastupdate`,c.`comicdesc` ';
-    protected $_comicsWhereCaus = ' WHERE  c.`ttotal` > 0';
-    protected $_volDetialColum = ' v.`id` ,  v.`comicid` , v.`coverpid` ,  v.`vol` ,  v.`name` ,  v.`pages` ,  v.`hits` , v.`voltype`  ';
-    //protected $_volWhereCaus = ' WHERE  v.`pages` != 0';    
-    protected $_volWhereCaus = ' WHERE  v.`isdone` = 1 ';
-    protected $_pageDetailColum = 'p.`id` ,  p.`vid` ,  p.`vols` ,  p.`comicid` ,  p.`prevpid` ,  p.`nextpid` ,  p.`pageno` , p.`isadult`  ';
     public $db = null;
     function initialize() {
        $c = $this->getDI()->get('config');
-       $this->db = new PDO(sprintf("mysql:host=%s;dbname=%s;charset=%s", $c->database->host, $c->database->dbname, $c->database->charset, $c->database->username, $c->database->password);
+       $this->db = new PDO(sprintf("mysql:host=%s;dbname=%s;charset=%s", $c->database->host, $c->database->dbname, $c->database->charset), $c->database->username, $c->database->password);
        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-  function getComicCoverUrl($comicid = null ,$isdetail = null,$serverid = 53){
-    if(!$comicid)
-      return false;
-
-    $imgPatt      = "http://%d.c.cdvcdn.com/cover/%d/%d/%d/%d-s-cover.jpg";
-    if($isdetail)
-      $imgPatt    = "http://%d.c.cdvcdn.com/cover/%d/%d/%d/%d-cover.jpg";
-
-    $g = sprintf("%06d",$comicid);
-
-    $h = 2;
-    $coverUrl = sprintf($imgPatt,$h,$g[3],$g[4],$g[5],$comicid);
-    return $coverUrl;
+  function getServerid(&$serverid){
+    $serverid = explode('|', $serverid);
+    $serverid = $serverid[mt_rand(0, count($serverid) - 1)];
   }
 
-  function getComicVolCoverPic($pages = null,$isThumbnail = null,$serverid = 53,$ishot=0){
-    $imgPatt      = "http://%d.fs%s.comic.ckcdn.com/page/%d/%d/%d/%d/%d/%s%s-%d-%04d-%d.jpg";
-    $imgPatt      = "http://%d.c.cdvcdn.com/page/%d/%d/%d/%d/%d/%s%s-%d-%04d-%d.jpg"; 
+  function getVideoUrl($videoname,$serverid,$isvip=null){
+      $this->getServerid($serverid);
+      $f      ="/".$videoname;
+      $vip    = "";
+      $p      = '';
+      if($serverid === '136-170-2' || $serverid==='136-170')
+        $p = ':8888';
 
-    $serverid = $ishot ? 1 : 2;
-
-    $thumb        = $isThumbnail ? 'thumb-' : '';
-    $g            = sprintf("%06d",$pages['comicid']);
-    $coverUrl = sprintf($imgPatt,$serverid,$g[3],$g[4],$g[5],$pages['comicid'],$pages['vols'],$thumb,$g,$pages['vid'],$pages['pageno'],$pages['id']);
-    return $coverUrl;
+      $secret = "iloveallen";
+      if($isvip){
+        $vip = "vip";
+        $secret = "goldallen";
+      }
+      $http   = sprintf("http://1.fs%s.%sav.ckcdn.com%s",$serverid,$vip,$p);
+      $uri_prefix = "/dl/";
+      $t      = time();
+      $t_hex  = sprintf("%08x", $t);
+      $m      = md5($secret.$f.$t_hex);
+      $videopath = sprintf('%s%s%s/%s%s',$http,$uri_prefix, $m, $t_hex, $f);
+      return $videopath;
   }
+  
+  function getPicUrl($avkey = null,$serverid = 1 ,$pictype = 's'){
+      $this->getServerid($serverid);
+      $p = '';
+      if($serverid === '136-170' || $serverid === '136-170-2')
+        $p = ':8888';
 
-  function getPagePic($pages = null,$isThumbnail = null,$serverid = 53,$ishot=0){
-   $imgPatt      = "http://%d.c.cdvcdn.com/page/%d/%d/%d/%d/%d/%s%s-%d-%04d-%d.jpg";
+      $imgPatt      = "http://%s.fs%s.av.ckcdn.com%s/%s-%s.jpg";
+      $e = isset($avkey[4])?strtolower($avkey[4]):9;
+      switch($e){
+        default:
+          $pre = 0;
+        break;
+        case '0':
+        case '1':
+        case '2':
+        case '7':
+          $pre = 0;
+        break;
+        case '3':
+        case '4':
+        case 'a':
+        case 'b':
+        case 'c':
+        case 'd':
+        case 'e':
+        case 'f':
+          $pre = 1;
+        break;
+        case '5':
+        case '6':
+        case 'g':
+        case 'h':
+        case 'i':
+        case 'j':
+        case 'k':
+        case 'l':
+        case 'm':
+          $pre = 2;
+        break;
+        case '8':
+        case '9':
+        case 'n':
+        case 'o':
+        case 'p':
+        case 'q':
+        case 'r':
+          $pre = 3;
+        break;
+        case 's':
+        case 't':
+        case 'u':
+        case 'v':
+        case 'w':
+        case 'x':
+        case 'y':
+        case 'z':
+          $pre = 4;
+        break;
 
-    $serverid = $ishot ? 1 : 2;
+      }
 
-    $thumb        = $isThumbnail ? 'thumb-' : '';
-    $g            = sprintf("%06d",$pages['comicid']);
-    $coverUrl = sprintf($imgPatt,$serverid,$g[3],$g[4],$g[5],$pages['comicid'],$pages['vols'],$thumb,$g,$pages['vid'],$pages['pageno'],$pages['id']);
-    return $coverUrl;
+      return sprintf($imgPatt,$pre,$serverid,$p,$avkey,$pictype);
   }
 
 

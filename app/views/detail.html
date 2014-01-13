@@ -1,0 +1,258 @@
+<!--{include file="header.html"}-->
+<section class="mainContainer">
+<!--{include file="directory.html"}-->
+  <section class="focusArea">
+    <div class="masthead">
+      <ul class="breadcrumbs">
+        <p>目前位置：</p>
+        <li>
+        <!--{foreach from=$channels item=channel}-->      <!--{if $cid ==$channel.cid}--><a onclick="_gaq.push(['_trackEvent', 'channels','<!--{$channel.name}-->']);" href="/maindex/lists/<!--{$channel.cid}-->" title="<!--{$channel.name}-->" class="globalText" ><!--{$channel.name}--></a><!--{/if}--><!--{/foreach}-->
+        </li>
+        <li>></li><li class="selected"><!--{$info.title}--></li>
+        <li><!--{if $isAdmin>0}-->
+    <a href="/avadmin/detail/<!--{$info.avkey}-->" target="_blank" style="color:red;">edit</a>
+    <!--{/if}--></li>
+      </ul>
+    </div>
+    <div class="adultAlbum">
+    <div class="watchVideo" id="watchVideo">
+    <div class="video-js-box">
+    <video class="video-js" id="videoplayer" ended="0" poster="<!--{$info.picurl}-->" height="480" width="800" controls="controls" >
+            <source type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' src=""></source>
+    </video>
+    </div>
+    </div> 
+<a class="pirobox_gall1 item" rel="content-800-536" title="<!--{$info.title}-->" href="/maindex/img/<!--{$info.avkey}-->/<!--{$info.serverid}-->" rev="1">
+<img src='<!--{$info.picurl}-->' onError="this.src='/images/global/error2x.jpg';" alt="<!--{$info.description|strip_tags}-->"/>
+</a>
+    </div>
+    <!--{if $info.ismp4}--><div class="ipadSupport">本影片支援在ipad等行動裝置上觀看</div><!--{/if}--> 
+    <div class="videoPay">
+    <ul class="online">
+    <!--{if $userInfo.isvip > 0 || !$lastFreeLog}-->
+      <!--{if $info.bkey}-->
+    <li><a href="/maindex/play/<!--{$info.avkey}-->/B"  target="_blank" title="播放 <!--{$info.title}-->">B面</a></li>
+    <li><a href="/maindex/play/<!--{$info.avkey}-->"    target="_blank" title="播放 <!--{$info.title}-->" >A面</a></li>
+      <!--{else}-->
+    <li><a href="/maindex/play/<!--{$info.avkey}-->" id="playBtn"   target="_blank" title="播放 <!--{$info.title}-->" >播放</a></li>
+      <!--{/if}-->
+    <!--{else}-->
+      <!--{if $info.bkey}-->
+    <li><a href="#" class="isvipbtnplay"  title="播放 <!--{$info.title}-->">B面</a></li>
+    <li><a href="#" class="isvipbtnplay"  title="播放 <!--{$info.title}-->" >A面</a></li>
+      <!--{else}-->
+    <li><a href="#" class="isvipbtnplay" id="playBtn"  title="播放 <!--{$info.title}-->" >播放</a></li>
+      <!--{/if}-->
+    <!--{/if}--> 
+    </ul>
+    <ul class="download">
+    <!--{if $userInfo.isvip == 2}-->
+    <!--{if $info.bkey}-->
+    <li><a href="/maindex/download/<!--{$info.avkey}-->/B"  target="_blank" title="下載 <!--{$info.title}-->">B面</a></li>
+    <li><a href="/maindex/download/<!--{$info.avkey}-->"    target="_blank" title="下載 <!--{$info.title}-->" >A面</a></li>
+    <!--{else}-->
+    <li><a href="/maindex/download/<!--{$info.avkey}-->"    target="_blank" title="下載 <!--{$info.title}-->" >下載</a></li>
+    <!--{/if}-->
+    <!--{else}-->
+    <!--{if $info.bkey}-->
+    <li><a href="#" class="issvipbutton" title="下載 <!--{$info.title}-->">B面</a></li>
+    <li><a href="#" class="issvipbutton" title="下載 <!--{$info.title}-->" >A面</a></li>
+    <!--{else}-->
+    <li><a href="#" class="issvipbutton" title="下載 <!--{$info.title}-->" >下載</a></li>
+    <!--{/if}-->
+    <!--{/if}-->
+    </ul>
+    </div>
+    <div class="descriptionInfo">
+    <!--{if 0}-->
+    <div class="Evaluation">
+    <!--{if 0}--><ul class="star_rating"><li class="current_rating star_4">4</li></ul><span>共有14人評分</span><!--{/if}-->
+    <div class="facebook"><iframe class="fblikes" src="http://www.facebook.com/plugins/like.php?locale=zh_TW&href=<!--{$nowurl|urlencode}-->&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=25" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:25px; margin:0px 0px 0px 10px; " allowTransparency="true"></iframe></div>
+    <!--{if !$isCollected}-->
+    <p class="watchlike" id="watchlike" ><a href="#" title="">將本片加入到我的收藏</a></p>
+    <!--{else}-->
+    <p class="likeSelected" id="watchlike" ><a href="#" title="">已加入我的收藏！</a></p>
+    <!--{/if}-->
+    </div>
+    <!--{/if}-->
+    <ul class="detail">
+    <li>上傳帳號：<!--{$info.username|substr:5}-->*********</li>
+    <li id="watchlike" ><a href="" class="globalText">
+    <!--{if !$isCollected}-->
+    將本片加入到我的最愛
+    <!--{else}-->
+    已加入我的收藏!
+    <!--{/if}-->
+    </a> &nbsp;&nbsp;
+    </li>
+    <li class="title">影片名稱：<!--{$info.title}--></li>
+    <li>馬賽克：<!--{if $info.ismasked}-->薄碼<!--{else}-->無碼<!--{/if}--></li>
+    <li>分類：
+    <!--{foreach from=$channels item=channel}-->
+      <!--{if $cid ==$channel.cid}--><a onclick="_gaq.push(['_trackEvent', 'channels','<!--{$channel.name}-->']);" href="/maindex/lists/<!--{$channel.cid}-->" title="<!--{$channel.name}-->" class="globalText" ><!--{$channel.name}--></a><!--{/if}--><!--{/foreach}-->
+    </li>
+    <li>上架時間：<!--{$info.createtime}--></li>
+      <li>影片編號：<!--{$info.avkey}--></li>
+    <li class="extra"><em></em><!--{$info.description}--></li>
+    <li class="extra"><em></em>關鍵字：
+      <!--{foreach from=$taglists item=row}-->
+      <a onclick="_gaq.push(['_trackEvent', 'hotTags','<!--{$row.name}-->']);" href="/maindex/tag/<!--{$row.name|urlencode}-->" title="<!--{$row.name}-->" class="globalText"><!--{$row.name}--></a>
+      <!--{/foreach}-->
+      </li>
+    </ul>
+    </div>
+    <div class="fbMessage"><div id="fbcomments" style="margin:10px 0 0 10px;">
+        </div></div>
+<div class="section">
+<h3>其他相關影片</h3>
+<ul>
+      <!--{include file="lists.html"}-->
+    </ul>
+    </div> 
+    </section>
+</section>
+<script type="text/javascript" src="/js/jquery.js"></script>
+<!--
+<script type="text/javascript" src="/js/ja/jquery.ui.draggable.js"></script>
+<script type="text/javascript" src="/js/ja/jquery.alerts.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.8.2.custom.min.js"></script>
+<script type="text/javascript" src="/js/pirobox_extended.js"></script>
+-->
+<!--{if 1}-->
+<script type="text/javascript" src="<!--{$js_url}-->/js/jwplayer/jwplayer.js"></script>
+<!--{/if}-->
+<script>
+/*
+jwplayer("watchVideo").setup({
+    image: "<!--{$info.picurl}-->",
+    //file: "http://content.bitsontherun.com/videos/i8oQD9zd-640.mp4",
+    file: "",
+    fullscreen: true,
+    autostart: false,
+    height: 750,
+    width: 750
+  });
+*/
+function loadPlay(myFile, myImage){
+/*
+  jwplayer("watchVideo").load([{
+      file: myFile
+     ,image: myImage
+     ,fullscreen: true
+     ,autostart: false
+     ,height: 750
+     ,width: 750
+  }]);
+  jwplayer("watchVideo").play();
+*/
+  pflag = {flag:0,setFlag:function(f){this.flag=f;}}
+  jwplayer("watchVideo").setup({
+    image: "<!--{$info.picurl}-->",
+    file: "http://content.bitsontherun.com/videos/i8oQD9zd-640.mp4",
+    autostart: true,
+    'events':{onReady: function(evt) { $('#watchVideo_menu,#watchVideo_logo').remove(); },onPlay:function(evt){if(pflag.flag==0){$.get('/api/addPlayed/<!--{$info.avkey}-->');pflag.setFlag(1);return false;}else{return false;}}},
+    height: 750,
+    width: 750
+  });
+}
+$('#playBtn').click(function(){
+  $.getJSON("/api/videourl/<!--{$info['avkey']}-->/0/0",function(result){
+    if(result.status == 200){
+       myFile = result.videourl;
+       myImage = result.picurl;
+       loadPlay(myFile,myImage);
+       alert(myFile);
+    }else{
+       alert(result.status);
+    }
+  },'json');  
+return false;
+});
+
+$(document).ready(function() {
+
+<!--{if $isadmin}-->
+$('#delavdown').click(function(e){
+  if(!confirm('您確定要下架此影片嗎？')){
+      if (e) //停止事件冒泡 
+       e.stopPropagation(); 
+
+     return false;
+  }
+  return true;
+});
+
+<!--{/if}-->
+/*
+  $().piroBox_ext({
+        piro_speed : 900,
+        bg_alpha : 0.1,
+        piro_scroll : true //pirobox always positioned at the center of the page
+    });
+*/
+
+  $('.isvipbtnplay').click(function(){    
+      jConfirm('觀看只提供VIP觀看!!!\n想加入VIP嗎？\n', '確認', function(r) {
+        if(r){ 
+            _gaq.push(['_trackEvent', 'pay','js-vipopen']);           
+            window.open('http://ck101.com/85pay.php?op=info&utm_source=apen&utm_medium=detail&utm_campaign=vipplay');
+        }else
+            return false;    
+    });
+  });
+
+  $('.isvipbutton').click(function(){    
+      jConfirm('下載只提供VIP觀看!!!\n想加入VIP嗎？\n', '確認', function(r) {
+        if(r){    
+            _gaq.push(['_trackEvent', 'pay','js-vipsopen']);        
+            window.open('http://ck101.com/85pay.php?op=info&utm_source=apen&utm_medium=detail&utm_campaign=svipplay');
+        }else
+            return false;    
+    });
+  });
+
+  $('.issvipbutton').click(function(){
+    jConfirm('下載只提供S-VIP下載!!!\n想加入S-VIP嗎？\n', '確認', function(r) {
+        if(r){
+            _gaq.push(['_trackEvent', 'pay','js-vipsopen']);
+            window.open('http://ck101.com/85pay.php?op=info&utm_source=apen&utm_medium=detail&utm_campaign=svipplay');
+        }else
+            return false;
+    
+    });
+  });
+
+
+
+  $('#watchlike').click(function() {
+    <!--{if $userInfo.uid}-->
+    $.get('/maindex/addCollection/<!--{$info.avkey}-->',function(data){
+      if(data.status==1){
+          $("#watchlike").removeClass('watchlike'); 
+          $("#watchlike").addClass('likeSelected');
+          $("#watchlike").html('<a href="#" title="">已加入我的收藏！</a>');
+      }
+      if(data.status==0){
+          $("#watchlike").removeClass('likeSelected'); 
+          $("#watchlike").addClass('watchlike');
+          $("#watchlike").html('<a href="#" title="">將本片加入到我的收藏</a>');
+      }
+
+     }, "json"); 
+      return false;
+    <!--{else}-->
+      jConfirm('加入收藏只提供VIP!!!\n想加入VIP嗎？\n', '確認', function(r) {
+        if(r){
+            _gaq.push(['_trackEvent', 'pay','js-vipopen']);
+            window.open('http://ck101.com/85pay.php?op=info&utm_source=apen&utm_medium=detail&utm_campaign=vipplay');
+        }else 
+            return false;
+      });
+
+    <!--{/if}-->
+  });
+});
+</script>
+<div id ='fb-root'></div>
+
+<!--{include file="footer.html"}-->

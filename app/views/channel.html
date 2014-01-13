@@ -1,0 +1,5 @@
+<ul class="channel">
+<!--{foreach from=$channels item=channel}-->
+      <li <!--{if $cid ==$channel.cid}-->class="selected"<!--{/if}-->><span class="iconList_<!--{$channel.cid}-->"></span><a onclick="_gaq.push(['_trackEvent', 'channels','<!--{$channel.name}-->']);" href="<!--{if ($cid ==$channel.cid &&$pageMethod==='lists' )}-->#<!--{else}-->/maindex/lists/<!--{$channel.cid}--><!--{/if}-->" title="<!--{$channel.name}-->"><!--{$channel.name}--></a></li>
+      <!--{/foreach}-->
+</ul>      

@@ -1,0 +1,80 @@
+<!--{include file="header.html"}-->
+<!--{if $isWarrning && !$userInfo}-->
+<div class="alerts"><p>您的IP[ <!--{$ip}--> ]已被占用!!!! 請點此<a onclick="_gaq.push(['_trackEvent', 'pay','html-vipopen']);" href="/pay" target="_blank">升級VIP</a>之後,重新登入觀看.&nbsp;&nbsp;&nbsp; (誤將帳號分享給朋友.)</p></div>
+<!--{/if}-->
+<section class="mainContainer">
+<!--{include file="directory.html"}-->
+  <section class="focusArea">
+    <!--{if $pageMethod==='index' && $nowpage<2}-->
+    <div class="poster">無與倫比的VIP權限更新，更快，更值得。</div>
+    <!--{/if}-->
+    <div class="masthead">
+      <ul class="breadcrumbs">
+        <p>目前位置：</p>
+
+<!--{if $pageProg === 'maindex'}-->
+<!--{if $pageMethod ==='tag'}-->
+        <li><a href="#" title="">tag列表 > <!--{$tagname}--></a></li>
+<!--{elseif $pageMethod ==='lists'}-->
+        <li><a href="#" title="">影片列表 > <!--{foreach from=$channels item=channel}--><!--{if $cid ==$channel.cid}--><!--{$channel.name}--><!--{/if}--><!--{/foreach}--></a></li>
+<!--{elseif $pageMethod ==='collected'}-->
+        <li><a href="#" title="">我的收藏</a></li>
+<!--{else}-->
+        <li><a href="#" title="">影片列表</a></li>
+<!--{/if}-->
+<!--{elseif $pageProg ==='search'}-->
+        <li><a href="#" title="">搜尋結果</a></li>
+<!--{/if}-->
+<!--{if $lists}-->
+        <li>></li>
+        <!--{if $order === 'new' || $order === '0' || !$order}-->
+        <li class="selected"><a href="#" title="最新上架">最新上架</a></li>
+        <!--{else if $order === 'hot'}-->
+        <li class="selected"><a href="#" title="熱門程度">熱門程度</a></li>
+        <!--{else if $order === 'scores'}-->
+        <li class="selected"><a href="#" title="網友評分">網友評分</a></li>
+        <!--{/if}-->
+<!--{/if}-->
+      </ul>
+<!--{if $lists}-->
+      <ul class="sortList">
+        <p>排序方法:</p>
+<!--{if $pageProg === 'maindex'}-->        
+<li <!--{if $order === 'new' || $order === '0' || !$order}-->class='selected'<!--{/if}-->><a href='<!--{if $order === 'new' || $order === '0' || !$order}-->#<!--{else}-->/maindex/<!--{$pageMethod}-->/<!--{if $pageMethod ==='tag'}--><!--{$tagname|urlencode}--><!--{/if}--><!--{$cid}-->/new<!--{/if}-->' title='上架日期'>上架日期</a><span class='pipe'>|</span></li>
+        <li <!--{if $order === 'hot'}-->class='selected'<!--{/if}-->><a href='<!--{if $order === 'hot'}-->#<!--{else}-->/maindex/<!--{$pageMethod}-->/<!--{if $pageMethod ==='tag'}--><!--{$tagname|urlencode}--><!--{/if}--><!--{$cid}-->/hot<!--{/if}-->' title='熱門程度'>熱門程度</a>
+<!--{if 0}-->
+        <span class='pipe'>|</span></li>
+        <li <!--{if $order === 'scores'}-->class='selected'<!--{/if}-->><a href='<!--{if $order === 'scores'}-->#<!--{else}-->/maindex/<!--{$pageMethod}-->/<!--{if $pageMethod ==='tag'}--><!--{$tagname|urlencode}-->/<!--{/if}--><!--{$cid}-->/scores<!--{/if}-->' title='網友評分'>網友評分</a></li>
+<!--{/if}-->
+<!--{elseif $pageProg ==='search'}-->
+        <li <!--{if $order === 'new' || $order === '0' || !$order}-->class='selected'<!--{/if}-->>
+        <a href="<!--{if $order === 'new' || $order === '0' || !$order}-->#<!--{else}-->/search/lists/<!--{$urlFomat}-->&order=new<!--{/if}-->" title="上架日期">上架日期</a>
+        <span class="pipe">|</span>
+        </li>
+        <li <!--{if $order === 'hot'}-->class='selected'<!--{/if}-->><a href="<!--{if $order === 'hot'}-->#<!--{else}-->/search/lists/<!--{$urlFomat}-->&order=hot<!--{/if}-->" title="熱門程度">熱門程度</a>
+        </li>
+
+<!--{/if}-->
+
+      </ul>
+
+
+
+<!--{/if}-->
+    </div>
+    <!--{$PAGESTR}-->
+    <div class="imgList">
+<!--{if $lists}-->
+      <ul>
+              <!--{include file="video_lists.html"}-->                                                                                                                          </ul>
+<!--{else}-->
+<div class="searchBox">
+<h4>您在尋找什麼嗎？</h4>
+<p>很抱歉，無法找到您要找的內容。您可能輸入了錯誤的關鍵字或我們沒有您要的內容。您可以將您的需求回報給我們，謝謝。</p>
+</div>
+<!--{/if}-->
+    </div>
+  <!--{$PAGESTR}-->
+</section>
+</section>
+<!--{include file="footer.html"}-->

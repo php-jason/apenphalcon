@@ -1,0 +1,10 @@
+<aside id="sidebar">
+<!--{include file="channel.html"}-->
+    <div class="divider"></div>
+    <ul class="Tags">
+      <h3>熱門標籤</h3>
+      <!--{foreach from=$hotTags item=Tag}-->
+      <li><a onclick="_gaq.push(['_trackEvent', 'customhotTags','<!--{$Tag.name}-->']);" href="<!--{$Tag.url}-->" title="<!--{$Tag.name}-->" target="_blank"><!--{$Tag.name}--></a></li>
+      <!--{/foreach}-->
+    </ul>
+  </aside>

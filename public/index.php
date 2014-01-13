@@ -1,5 +1,4 @@
 <?php
-
 error_reporting(E_ALL);
 define('APPPATH', '../app/');
 try {
@@ -82,26 +81,6 @@ try {
       $router->setDefaultController("maindex");
       $router->add("/vols/{coverpid:[0-9]+}/{pagenum:[0-9]+}/?","vols::index");
       $router->add("/vols/{coverpid:[0-9]+}/{pagenum:[0-9]+}/{isFullScreen:[0-9]}/?","vols::index");
-      $router->add("/lists/{cid:[0-9]+}/?","lists::index");
-      $router->add("/lists/{cid:[0-9]+}/{order:[a-z]+}/?","lists::index");
-      $router->add("/lists/{cid:[0-9]+}/{order:[a-z]+}/{nowpage:[0-9]+}/?","lists::index");
-      $router->add("/comic/{comicid:[0-9]+}/?","comic::index");
-      $router->add("/comic/{comicid:[0-9]+}/{voltype:[0-9]}/?","comic::index");
-      $router->add("/comic/{comicid:[0-9]+}/{voltype:[0-9]}/{nowpage:[0-9]+}/?","comic::index");
-      $router->add("/comic/{comicid:[0-9]+}/{voltype:[0-9]}/{order:[0a-z]+}/{nowpage:[0-9]+}/?","comic::index");
-      $router->add("/resetcomiccache/{comicid:[0-9]+}/?","comic::resetcomiccache");
-      $router->add("/weeklylists/{wkday:[0-9]}/?","maindex::weeklylists");
-      $router->add("/weeklylists/{wkday:[0-9]}/{nowpage:[0-9]+}/?","maindex::weeklylists");
-      $router->add("/weeklylists[/]?","maindex::weeklylists");
-      $router->add("/rank[/]?","maindex::rank");
-      $router->add("/hotcomic/{nowpage:[0-9]+}/?","maindex::hotcomic");
-      $router->add("/randomcomic/{nowpage:[0-9]+}/?","maindex::randomcomic");
-      $router->add("/comicstaglist/{tagname:.+}/?","comic::comicstaglist");
-      $router->add("/comicstaglist/{tagname:.+}/{nowpage:[0-9]+}/?","comic::comicstaglist");
-      $router->add("/fav/{nowpage:[0-9]+}/?","fav::index");
-      $router->add("/fav/addCollection/{cid:[0-9]+}/?","fav::addCollection");
-      $router->add("/bookmark/{nowpage:[0-9]+}/?","bookmark::index");
-      $router->add("/history/{nowpage:[0-9]+}/?","history::index");
       return $router;
    });
 
